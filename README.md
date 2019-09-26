@@ -35,9 +35,17 @@ option is smaller, the performance may be improved.  (default: 1000)
 Max results from TabNine.
 (default: 10)
 
+
+### `markers`
+
+If the marker is not found, TabNine will be ignored.
+(default: [])
+
+
 ```vim
 call deoplete#custom#var('tabnine', {
 \ 'line_limit': 500,
 \ 'max_num_results': 20,
+\ 'markers': ['.git/'],
 \ })
 ```

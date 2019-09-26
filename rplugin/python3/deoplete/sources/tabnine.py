@@ -55,16 +55,31 @@ class Source(Base):
         self.vars = {
             'line_limit': 1000,
             'max_num_results': 10,
+            'markers': [],
         }
 
         self._proc = None
         self._response = None
         self._install_dir = os.path.dirname(os.path.dirname(os.path.dirname(
             os.path.dirname(os.path.dirname(os.path.realpath(__file__))))))
+        self._found_marker = False
+
+    def on_event(self, context):
+        if not self.get_var('markers'):
+            self._found_marker = True
+            return
+
+        self._found_marker = False
+        bufname = self.vim.call('fnamemodify',
+                                self.vim.current.buffer.name, ':p')
+        for marker in self.get_var('markers'):
+            func = 'finddir' if '/' in marker else 'findfile'
+            if self.vim.call(func, marker, bufname + ';'):
+                self._found_marker = True
 
     def get_complete_position(self, context):
         m = re.search(r'\s+$', context['input'])
-        if m:
+        if m or not self._found_marker:
             return -1
 
         self._response = self._get_response(context)
