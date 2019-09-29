@@ -70,11 +70,9 @@ class Source(Base):
             return
 
         self._found_marker = False
-        bufname = self.vim.call('fnamemodify',
-                                self.vim.current.buffer.name, ':p')
         for marker in self.get_var('markers'):
             func = 'finddir' if '/' in marker else 'findfile'
-            if self.vim.call(func, marker, bufname + ';'):
+            if self.vim.call(func, marker, context['bufpath'] + ';'):
                 self._found_marker = True
 
     def get_complete_position(self, context):
